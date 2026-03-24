@@ -91,3 +91,30 @@ class LinearInternalTopology(Topology):
     """
     def get_pairs(self, num_qubits: int) -> list:
         return [[i, i + 1] for i in range(1, num_qubits - 2)]
+
+
+class PairBathTopology(Topology):
+    """
+    Topologia para conectar apenas as bordas e os banhos. (0->1 e (N-2)->(N-1))
+    """
+    def get_pairs(self, num_qubits: int) -> list:
+        return [[0, 1], [num_qubits - 2, num_qubits - 1]]
+
+
+class PairCorrTopology(Topology):
+    """
+    Topologia do tipo Rainbow (arco-íris) apenas para os qubits internos (excluindo os banhos).
+    """
+    def get_pairs(self, num_qubits: int) -> list:
+        return [[i, num_qubits - i - 1] for i in range(1, num_qubits // 2)]
+
+
+class PairWorkTopology(Topology):
+    """
+    Topologia que une a PairBathTopology e a PairCorrTopology.
+    """
+    def get_pairs(self, num_qubits: int) -> list:
+        bath = PairBathTopology().get_pairs(num_qubits)
+        corr = PairCorrTopology().get_pairs(num_qubits)
+        return bath + corr
+

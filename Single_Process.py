@@ -41,6 +41,7 @@ from many_qubit_operators import many_body_hamiltonian_from_local_operators, cre
 from partial_swap_multi_qubit import partial_SWAP_two_qubits
 from qhe_cycle_qtd_quantities import compute_single_qubit_heating, compute_average_work, compute_partition_heating
 
+from src.core.topologies import PairBathTopology, PairCorrTopology, PairWorkTopology
 from src.core.quantum_system import QuantumThermalMachine
 from src.core.operations import ThermalizationOperation, ImaginaryParametricCorrelation, TrotterizedHeisenbergXYZ, TrotterizedHeisenbergXX
 from src.optimization.ergotropy_optimizer import ErgotropyOptimizer
@@ -176,13 +177,12 @@ if __name__ == "__main__":
 
         # gerando combinações de configurações
         # Substituído a dependência faltante utils_networks pela lógica local iterativa
-        
         # pair_corr é o rainbow connection sem os banhos [1, 2] para N=4
-        pair_corr = [[i, N - i - 1] for i in range(1, N // 2)]
+        pair_corr = PairCorrTopology().get_pairs(N)
         
         # pair_work é a união da parte central com os banhos térmicos (0->1 e (N-2)->(N-1))
-        pair_bath = [[0, 1], [N - 2, N - 1]]
-        pair_work = pair_bath + pair_corr
+        pair_bath = PairBathTopology().get_pairs(N)
+        pair_work = PairWorkTopology().get_pairs(N)
 
         # Redefine o array de parâmetros a cada iteração de N (se N mudar)
         num_params = len(pair_work)
